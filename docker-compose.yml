@@ -1,0 +1,116 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    expose:
+      - 8000
+    ports:
+      - "8000:8000"
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+        - ./fastapi-logs:/app/backend/logs
+    networks:
+      - ainna-network
+
+
+  node1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.1
+    container_name: node1
+    environment:
+      - node.name=node1
+      - cluster.name=es-cluster-7
+      - discovery.seed_hosts=node1,node2
+      - cluster.initial_master_nodes=node1,node2
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - bootstrap.system_call_filter=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data1:/usr/share/elasticsearch/data
+    networks:
+      - ainna-network
+
+
+  node2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.1
+    container_name: node2
+    environment:
+      - node.name=node2
+      - cluster.name=es-cluster-7
+      - discovery.seed_hosts=node1,node2
+      - cluster.initial_master_nodes=node1,node2
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - bootstrap.system_call_filter=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data2:/usr/share/elasticsearch/data
+    networks:
+      - ainna-network
+
+  kibana_elka:
+    image: docker.elastic.co/kibana/kibana:7.11.1
+    environment:
+      ELASTICSEARCH_HOSTS: '["http://node1:9200","http://node2:9200"]'
+      xpack.monitoring.ui.container.elasticsearch.enabled: true
+    ports:
+      - 5601:5601
+    networks:
+      - ainna-network
+    depends_on:
+      - node1
+      - node2
+
+  filebeat_elka:
+    build:
+        context: ./backend/filebeat
+    container_name: filebeat_elka
+    volumes:
+        - ./fastapi-logs:/src/logs
+    networks:
+      - ainna-network
+
+    depends_on:
+      - node1
+      - node2
+      - kibana_elka
+
+  logstash_elka:
+    image: docker.elastic.co/logstash/logstash:7.11.1
+    networks:
+      - ainna-network
+    environment:
+      XPACK_MONITORING_ENABLED: "false"
+    expose:
+      - 5044
+    ports:
+        - 5044:5044
+    volumes:
+        - ./logstash/pipelines/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+        - ./logstash/pipelines:/usr/share/logstash/config/pipelines:ro
+    depends_on:
+      - node1
+      - node2
+      - kibana_elka
+      - filebeat_elka
+volumes:
+  logstash_elka:
+    driver: local
+  rzd-logstash:
+    driver: local
+  es-data1:
+    driver: local
+  es-data2:
+    driver: local
+
+
+networks:
+  ainna-network:
+    driver: bridge

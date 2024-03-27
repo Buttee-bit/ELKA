@@ -1,0 +1,18 @@
+2024-03-08 22:44:00,525 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2024-03-08 22:44:02,856 - src.main - INFO - --- Start up App ---
+2024-03-08 22:44:25,893 - src.admin.router - INFO - Start info-all-admin
+2024-03-08 22:44:25,893 - src.admin.router - INFO - Start support.info_all_admin()
+2024-03-08 22:44:26,162 - src.admin.router - INFO - Start info-all-admin
+2024-03-08 22:44:26,163 - src.admin.router - INFO - Start support.info_all_admin()
+2024-03-08 22:47:05,146 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2024-03-08 22:47:06,430 - src.main - INFO - --- Start up App ---
+2024-03-08 22:47:14,107 - src.admin.router - INFO - Start info-all-admin
+2024-03-08 22:47:14,108 - src.admin.router - INFO - Start support.info_all_admin()
+2024-03-08 22:47:14,364 - src.admin.router - INFO - Start info-all-admin
+2024-03-08 22:47:14,364 - src.admin.router - INFO - Start support.info_all_admin()
+2024-03-08 22:47:38,417 - src.admin.router - INFO - Start info-all-admin
+2024-03-08 22:47:38,418 - src.admin.router - INFO - Start support.info_all_admin()
+2024-03-08 22:47:38,587 - src.admin.router - INFO - Start info-all-admin
+2024-03-08 22:47:38,588 - src.admin.router - INFO - Start support.info_all_admin()
+2024-03-08 23:32:13,422 - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2024-03-08 23:32:15,532 - src.main - INFO - --- Start up App ---
